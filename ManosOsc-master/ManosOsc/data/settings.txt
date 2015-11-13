@@ -1,0 +1,62 @@
+OSC Send IP Number
+127.0.0.1
+
+OSC Send Port
+7110
+
+Send OSC Active
+true
+
+OSC Channel Format (Manos, OldManos, OSCeleton, Animata, Isadora)
+Manos
+
+MIDI Send Channel
+0
+
+MIDI Send Port
+0
+
+Send MIDI Active
+true
+
+Check for Net Connection
+true
+
+Center Coordinates
+false
+
+Open App Folder at Startup
+true
+
+Fixed Hand Positions
+false
+
+Show Splash Screen
+true
+
+Stage Width
+700
+
+Stage Height
+700
+
+Stage Depth
+1000
+
+Framerate
+60
+
+Reverse Z Axis
+true
+
+Debug Display On
+true
+
+Show Traces
+false
+
+Time to Trace
+0.5
+
+Font Size
+16

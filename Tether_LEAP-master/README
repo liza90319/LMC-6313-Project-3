@@ -1,0 +1,3 @@
+The Tether program was built in Processing and uses the LeapMotionP5 library by Onformative and the ControlP5 library by Andreas Schlegel. Also thanks to Jean Helfenstein's LeapOChoid for ideas on how to deal with the control menu. 
+
+Drawing is controlled by the Leap Motion controller. The program draws a line from each Tether to each finger detected by the Leap Motion. Finger depth determines the line weight for further control. Further characteristics, such as color and transparency, can be adjusted in the menu with the mouse. Initially, I attempted to design a program that used only motion control but the limitations that brought on got in the way of what the motion control does best in this program, control the drawing. 
