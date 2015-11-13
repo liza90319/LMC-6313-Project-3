@@ -6,19 +6,9 @@ import ddf.minim.effects.*;
 import ddf.minim.signals.*;
 import ddf.minim.spi.*;
 import ddf.minim.ugens.*;
-
-
-
-/**
-  * This sketch demonstrates how to use the AudioBuffer objects of an AudioPlayer 
-  * to draw the waveform and level of the sound as it is playing. These same 
-  * AudioBuffer objects are available on AudioInput, AudioOuput, and AudioSample,
-  * so they same drawing code will work in those cases.
-  *
-  */
+import ddf.minim.signals.*;
 
 import com.leapmotion.leap.*;
-
 import com.leapmotion.leap.Controller;
 import com.leapmotion.leap.Gesture.State;
 import com.leapmotion.leap.processing.*;
@@ -33,19 +23,22 @@ import com.leapmotion.leap.processing.LeapMotion;
 //import com.leapmotion.leap.processing.LeapMotion;
 
 
+
+LeapMotion      leap;
 Minim           minim;
 AudioPlayer     track;
-FilePlayer      filePlayer;
+AudioRecorder   recorder;
 AudioMetaData   meta;
-BeatDetect      beat;
 AudioInput      in;
 AudioOutput     out;
+BeatDetect      beat;
+FFT             fft;
+FilePlayer      filePlayer;
 Gain            gain;
-AudioRecorder   recorder;
-FFT             fft; //fft splits up a sound wave intp a selection of bands, 
-        //like spectrum, allowing you to what the volume of different frequencies of the sound signal
+Oscillator      osc;
+Oscil           wave;
+WaveformRenderer waveform;
 
-LeapMotion leap;
 
 
 
@@ -68,27 +61,31 @@ float r,g,b;
 
 void setup()
 {
-  size(1280, 900);
-  //size(1280, 800,P3D);
+  //size(1280, 900);
+  size(1280, 800,P3D);
   
   minim = new Minim(this);
   leap = new LeapMotion(this);
   isFastForward = false;
-  
-  
  
-  
-  
-  //display # of fingers on the screen
-  
-  textAlign(CENTER);
-  
+  textAlign(CENTER); 
   // this opens the file and puts it in the "play" state.                           
-  filePlayer = new FilePlayer( minim.loadFileStream(fileName) );
-  //volumn
+  filePlayer = new FilePlayer( minim.loadFileStream(fileName));
+  //filePlayer.loop();
+  //volumn 
   gain = new Gain(0.f);
   out = minim.getLineOut();
+  wave = new Oscil(20, 4f, Waves.SAW);
+  wave.patch(out);
+ 
+  //osc = new SawWave(100,0.2,out.sampleRate());
+  //osc = new SawWave(100,0.2,out.sampleRate());
+  //out.addSignal(osc);
+  waveform = new WaveformRenderer();
+  
   filePlayer.patch(gain).patch(out);
+ 
+  
   recorder = minim.createRecorder(in, "myrecording.wav");
   track = minim.loadFile("Armin van Buuren - Ping Pong (Original Mix).mp3", 1024);
   meta = track.getMetaData();
@@ -126,18 +123,8 @@ void draw()
   translate(width/2, height/3+100);
   noFill();
   fill(-1,10);
-  
-  //fill(#9900CC,20);
- // rect(width/4,0,width/4,height);
-  
-  //fill(#FFFF66,20);
-  //rect(width/2,0,width/4,height);
-  
-  //fill(#99CCFF,20);
-  //rect((width/4)*3,0,width/4,height);
+
  
-    
-  DisplayNumOfFingers();
 
   
   if(beat.isOnset()) rad = rad*0.9;
@@ -211,6 +198,18 @@ void draw()
     line(x1, 150 - snare.mix.get(i)*50, x2, 150 - snare.mix.get(i+1)*50);
   }
   
+  for (int i = 0; i <out.bufferSize() - 1; i++)
+  {
+    line(i, 50 - out.left.get(i)*50, i+1, 50 - out.left.get(i+1)*50);
+    line(i, 50 - out.right.get(i)*50, i+1, 50 - out.right.get(i+1)*50);
+  }
+  
+  //draw the waveform in the oscillator
+  for(int i =0; i <width-1; i++)
+  {
+    point(i, height/2 - (height*0.49)*wave.getWaveform().value((float)i/width));
+  }
+  
   String monitoringState = in.isMonitoring() ? "enabled" : "disableq     d";
   println( "Input monitoring is currently " + monitoringState + ".", 5, 15 );
   
@@ -226,7 +225,7 @@ void draw()
   
 
   getVolumeFromHand();
- 
+  DisplayNumOfFingers();
 }//draw
 
 
@@ -318,8 +317,7 @@ void onFrame(final Controller controller){
 
 void getVolumeFromHand(){
   volume = map(mouseX,0,width,-6,6);
-  //gain.setValue(volume);
-  track.setVolume(volume);
+  //track.setVolume(volume);
   textSize(12);
   text("Current Gain is " + volume + " volume.", 10, 20);
 }
@@ -349,3 +347,12 @@ int countExtendedFingers(final Controller controller)
   }
   return fingers;
 }
+
+void mouseMoved()
+  {
+    float amp = map(mouseY, 0, height, 1, 0);
+    wave.setAmplitude(amp);
+    
+    float freq = map(mouseX, 0, width, 110, 880);
+    wave.setFrequency(freq);
+  }
