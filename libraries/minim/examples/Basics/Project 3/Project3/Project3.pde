@@ -38,9 +38,15 @@ Gain            gain;
 Oscillator      osc;
 Oscil           wave;
 WaveformRenderer waveform;
-
-
-
+Controller     controller;
+Frame           frame;
+HandList        hands;
+Hand            hand;
+Hand            firstHand;
+Hand            secondHand;
+FingerList      fingerList;
+ToolList        tools;
+PointableList   pointables;
 
 //visualization 
 int w;
@@ -69,6 +75,18 @@ void setup()
   minim = new Minim(this);
   leap = new LeapMotion(this);
   isFastForward = false;
+  
+  controller = new Controller();
+  //LeapEventListener listener = new LeapEventListener();
+  //controller.addListener(listener); 
+  frame = controller.frame();
+  hands = frame.hands(); 
+
+  controller.enableGesture(Gesture.Type.TYPE_CIRCLE);
+  controller.enableGesture(Gesture.Type.TYPE_SWIPE);
+  controller.enableGesture(Gesture.Type.TYPE_KEY_TAP);
+  controller.enableGesture(Gesture.Type.TYPE_SCREEN_TAP);
+ 
  
   textAlign(CENTER); 
   // this opens the file and puts it in the "play" state.                           
@@ -213,7 +231,7 @@ void draw()
   }
   
   String monitoringState = in.isMonitoring() ? "enabled" : "disableq     d";
-  println( "Input monitoring is currently " + monitoringState + ".", 5, 15 );
+ // println( "Input monitoring is currently " + monitoringState + ".", 5, 15 );
   
   
  // noStroke();
@@ -228,6 +246,7 @@ void draw()
 
   getVolumeFromHand();
   DisplayNumOfFingers();
+  detectHand();
 }//draw
 
 
@@ -263,9 +282,12 @@ void DisplayNumOfFingers(){
   }
 
 
-void onFrame(final Controller controller){
-  fingers = countExtendedFingers(controller);
+void onFrame(Controller controller){
   
+
+  //fingers = countExtendedFingers(controller);
+  
+
 }
 
 void getVolumeFromHand(){
@@ -276,14 +298,12 @@ void getVolumeFromHand(){
 }
 
 
-int countExtendedFingers(final Controller controller)
+int countExtendedFingers(Controller controller)
 {
   int fingers = 0;
   if (controller.isConnected())
   {
     Frame frame = controller.frame();
-    HandList hands = frame.hands();
-    Hand firstHand = hands.get(0);
     if (!frame.hands().isEmpty())
     {
       for (Hand hand : frame.hands())
@@ -311,3 +331,31 @@ void mouseMoved()
     freq = map(mouseX, 0, width, 110, 880);
     wave.setFrequency(freq);
   }
+  
+void detectHand(){
+  Frame frame = controller.frame(); // controller is a Controller object
+  HandList hands = frame.hands();
+  Hand hand = hands.get(0);
+  PointableList pointables = hand.pointables();
+  FingerList fingerList = hand.fingers();
+ 
+  Vector position = hand.palmPosition();
+  Vector velocity = hand.palmVelocity();
+  Vector direction = hand.direction();
+    float pitch = direction.pitch();
+    float yaw = direction.yaw();
+    float roll = hand.palmNormal().roll();
+    
+  println("Hand Position is:" + position
+         + " " 
+         +"Hand Veclocity is:" + velocity
+         +" "
+         +"Hand Direction is:" + direction
+
+  );
+  println("pitch is" + pitch
+          +" "
+          + "yaw is" + yaw
+          +" "
+          + "roll is" +roll);
+}//detectHand
