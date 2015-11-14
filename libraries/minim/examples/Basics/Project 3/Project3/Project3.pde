@@ -17,8 +17,8 @@ import com.leapmotion.leap.Frame;
 import com.leapmotion.leap.Hand;
 import com.leapmotion.leap.processing.LeapMotion;
 
-//import com.leapmotion.leap.Controller;
-//import com.leapmotion.leap.Finger;
+
+import com.leapmotion.leap.Finger;
 
 //import com.leapmotion.leap.processing.LeapMotion;
 
@@ -282,6 +282,8 @@ int countExtendedFingers(final Controller controller)
   if (controller.isConnected())
   {
     Frame frame = controller.frame();
+    HandList hands = frame.hands();
+    Hand firstHand = hands.get(0);
     if (!frame.hands().isEmpty())
     {
       for (Hand hand : frame.hands())

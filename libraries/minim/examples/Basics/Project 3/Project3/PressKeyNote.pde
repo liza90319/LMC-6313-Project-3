@@ -64,21 +64,21 @@ void keyPressed()
       wave.setFrequency(82.4069);
       break;
       
-    case 'g':
+    case 'f':
       wave.setAmplitude(2);
       wave.setFrequency(87.3071);
       break;
     
-    case 'h':
+    case 'g':
       wave.setAmplitude(2);
       wave.setFrequency(97.9989);
       break;
     
-    case 'j':
+    case 'h':
       wave.setAmplitude(2);
       wave.setFrequency(110.000);
       break;
-    case 'k':
+    case 'j':
       wave.setAmplitude(2);
       wave.setFrequency(123.471);
       break;
