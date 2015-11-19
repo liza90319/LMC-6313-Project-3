@@ -1,6 +1,9 @@
-
 void keyPressed()
 {
+  if( key == 'q'){
+  scaling();
+  }
+  
   if ( key == 'm' || key == 'M' )
   {
     if ( in.isMonitoring() )
@@ -50,7 +53,7 @@ void keyPressed()
   
   switch( key ){
     case 'a':
-      wave.setAmplitude(2);
+      wave.setAmplitude(8);
       wave.setFrequency(65.4064);
       break;
     
@@ -87,7 +90,7 @@ void keyPressed()
   }//switch
   
   
-  
+ 
   
   
 }
